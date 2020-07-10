@@ -1,0 +1,334 @@
+package com.ztp.converter.utils;
+
+import com.ztp.converter.domain.link.Link;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashMap;
+
+@RunWith(MockitoJUnitRunner.class)
+public class HelperTest {
+
+    @InjectMocks
+    private Helper helper;
+
+    @Test
+    public void homePageChecker_ShouldReturnTrue_WhenLinkStartsWithHomePageURL() {
+        //arrange
+        String webLink = "https://www.trendyol.com/butik/liste/erkek";
+
+        // act
+        boolean result = helper.homePageChecker(webLink);
+
+        // assertion
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void homePageChecker_ShouldReturnFalse_WhenLinkNotStartsWithHomePageURL() {
+        //arrange
+        String webLink = "https://www.google.com/butik/liste/erkek";
+
+        // act
+        boolean result = helper.homePageChecker(webLink);
+
+        // assertion
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void usLocaleConverter_ShouldSucceed_1() {
+        //arrange
+        String women = "KADİN";
+
+        // act
+        String result = helper.usLocaleConverter(women);
+
+        // assertion
+        Assert.assertEquals("kadin", result);
+    }
+
+    @Test
+    public void usLocaleConverter_ShouldSucceed_2() {
+        //arrange
+        String child = "ÇOCUK";
+
+        // act
+        String result = helper.usLocaleConverter(child);
+
+        // assertion
+        Assert.assertEquals("cocuk", result);
+    }
+
+    @Test
+    public void usLocaleConverterWithOutLowerCase_ShouldSucceed_1() {
+        //arrange
+        String child = "ÇOCUK";
+
+        // act
+        String result = helper.usLocaleConverterWithOutLowerCase(child);
+
+        // assertion
+        Assert.assertEquals("COCUK", result);
+    }
+
+    @Test
+    public void usLocaleConverterWithOutLowerCase_ShouldSucceed_2() {
+        //arrange
+        String women = "KADİN";
+
+        // act
+        String result = helper.usLocaleConverterWithOutLowerCase(women);
+
+        // assertion
+        Assert.assertEquals("KADIN", result);
+    }
+
+    @Test
+    public void productDetailDeepLinkCreator_ShouldSucceed_WhenFullInformationIsGiven() {
+        //arrange
+        Link link = getFullInformationDummyLink();
+
+        //act
+        String result = helper.productDetailDeepLinkCreator(link);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Product&ContentId=1925865&CampaignId=439892&MerchantId=105064", result);
+    }
+
+    @Test
+    public void productDetailDeepLinkCreator_ShouldSucceed_WhenOnlyContentIdIsGiven() {
+        //arrange
+        Link link = getOnlyContentIdDummyLink();
+
+        //act
+        String result = helper.productDetailDeepLinkCreator(link);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Product&ContentId=1925865", result);
+    }
+
+    @Test
+    public void productDetailDeepLinkCreator_ShouldSucceed_WhenBoutiqueIdIsGiven() {
+        //arrange
+        Link link = getBoutiqueIdFilledDummyLink();
+
+        //act
+        String result = helper.productDetailDeepLinkCreator(link);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Product&ContentId=1925865&CampaignId=439892", result);
+    }
+
+    @Test
+    public void productDetailDeepLinkCreator_ShouldSucceed_WhenMerchantIdIsGiven() {
+        //arrange
+        Link link = getMerchantIdFilledDummyLink();
+
+        //act
+        String result = helper.productDetailDeepLinkCreator(link);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Product&ContentId=1925865&MerchantId=105064", result);
+    }
+
+    @Test
+    public void boutiqueDeepLinkCreator_ShouldSucceed_WhenLongIdIsGiven() {
+        //arrange
+        Long givenId = 2L;
+
+        //act
+        String result = helper.boutiqueDeepLinkCreator(givenId);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Home&SectionId=2", result);
+    }
+
+    @Test
+    public void searchDeepLinkCreator_ShouldSucceed_whenQueryContainsUpperAndLowerCase() {
+        //arrange
+        String webLink = "https://www.trendyol.com/tum--urunler?q=%C3%BCt%C3%BC";
+
+        //act
+        String result = helper.searchDeepLinkCreator(webLink);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Search&Query=%C3%BCt%C3%BC", result);
+    }
+
+    @Test
+    public void searchDeepLinkCreator_ShouldSucceed_whenQueryIsLowerCase() {
+        //arrange
+        String webLink = "https://www.trendyol.com/tum--urunler?q=elbise";
+
+        //act
+        String result = helper.searchDeepLinkCreator(webLink);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Search&Query=elbise", result);
+    }
+
+    @Test
+    public void searchDeepLinkCreator_ShouldSucceed_whenQueryIsUpperCase() {
+        //arrange
+        String webLink = "https://www.trendyol.com/tum--urunler?q=ELBISE";
+
+        //act
+        String result = helper.searchDeepLinkCreator(webLink);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Search&Query=ELBISE", result);
+    }
+
+    @Test
+    public void searchDeepLinkCreator_ShouldSucceed_whenQueryIsUpperCaseAndContainsNonASCIIChar() {
+        //arrange
+        String webLink = "https://www.trendyol.com/tum--urunler?q=ELBİSE";
+
+        //act
+        String result = helper.searchDeepLinkCreator(webLink);
+
+        //assertion
+        Assert.assertEquals("ty://?Page=Search&Query=ELBISE", result);
+    }
+
+    @Test
+    public void productDetailLinkParser_ShouldSucceed_WhenFullLinkGiven() {
+        //arrange
+        String webLink = helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892&merchantId=105064");
+
+        //act
+        HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
+
+        //assertion
+        Assert.assertEquals(parsedMap.get("brandOrCategoryName"), "casio");
+
+        Assert.assertEquals(parsedMap.get("productName"), "erkek-kol-saati")
+        ;
+        Assert.assertEquals(parsedMap.get("contentId"), "1925865");
+
+        Assert.assertEquals(parsedMap.get("boutiqueId"), "439892");
+
+        Assert.assertEquals(parsedMap.get("merchantId"), "105064");
+    }
+
+    @Test
+    public void detailLinkParser_ShouldSucceed_WhenOnlyContentIdGiven() {
+        //arrange
+        String webLink = "https://www.trendyol.com/casio/erkek-kol-saati-p-1925865";
+
+        //act
+        HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
+
+        //assertion
+        Assert.assertEquals(parsedMap.get("brandOrCategoryName"), "casio");
+
+        Assert.assertEquals(parsedMap.get("productName"), "erkek-kol-saati");
+
+        Assert.assertEquals(parsedMap.get("contentId"), "1925865");
+
+        Assert.assertEquals(parsedMap.get("boutiqueId"), "");
+
+        Assert.assertEquals(parsedMap.get("merchantId"), "");
+    }
+
+    @Test
+    public void productDetailLinkParser_ShouldSucceed_WhenOnlyBoutiqueIdGiven() {
+        //arrange
+        String webLink = helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892");
+
+        //act
+        HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
+
+        //assertion
+        Assert.assertEquals(parsedMap.get("brandOrCategoryName"), "casio");
+
+        Assert.assertEquals(parsedMap.get("productName"), "erkek-kol-saati");
+
+        Assert.assertEquals(parsedMap.get("contentId"), "1925865");
+
+        Assert.assertEquals(parsedMap.get("boutiqueId"), "439892");
+
+        Assert.assertEquals(parsedMap.get("merchantId"), "");
+    }
+
+    @Test
+    public void productDetailLinkParser_ShouldSucceed_WhenOnlyMerchantIdGiven() {
+        //arrange
+        String webLink = helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?merchantId=439892");
+
+        //act
+        HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
+
+        //assertion
+        Assert.assertEquals(parsedMap.get("brandOrCategoryName"), "casio");
+
+        Assert.assertEquals(parsedMap.get("productName"), "erkek-kol-saati");
+
+        Assert.assertEquals(parsedMap.get("contentId"), "1925865");
+
+        Assert.assertEquals(parsedMap.get("boutiqueId"), "");
+
+        Assert.assertEquals(parsedMap.get("merchantId"), "439892");
+    }
+
+
+    private Link getFullInformationDummyLink() {
+        Link link = new Link();
+        link.setId(1L);
+        link.setWebLink(helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892&merchantId=105064"));
+        link.setDeepLink("ty://?Page=Product&ContentId=1925865&CampaignId=439892&MerchantId=105064");
+        link.setBoutiqueId(439892L);
+        link.setMerchantId(105064L);
+        link.setBrandOrCategoryName("casio");
+        link.setProductName("erkek-kol-saati");
+        link.setContentId(1925865L);
+        link.setDeleted(false);
+        return link;
+    }
+
+    private Link getOnlyContentIdDummyLink() {
+        Link link = new Link();
+        link.setId(1L);
+        link.setWebLink(helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865"));
+        link.setDeepLink("ty://?Page=Product&ContentId=1925865");
+        link.setBoutiqueId(null);
+        link.setMerchantId(null);
+        link.setBrandOrCategoryName("casio");
+        link.setProductName("erkek-kol-saati");
+        link.setContentId(1925865L);
+        link.setDeleted(false);
+        return link;
+    }
+
+    private Link getBoutiqueIdFilledDummyLink() {
+        Link link = new Link();
+        link.setId(1L);
+        link.setWebLink(helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892"));
+        link.setDeepLink("ty://?Page=Product&ContentId=1925865&CampaignId=439892");
+        link.setBoutiqueId(439892L);
+        link.setMerchantId(null);
+        link.setBrandOrCategoryName("casio");
+        link.setProductName("erkek-kol-saati");
+        link.setContentId(1925865L);
+        link.setDeleted(false);
+        return link;
+    }
+
+    private Link getMerchantIdFilledDummyLink() {
+        Link link = new Link();
+        link.setId(1L);
+        link.setWebLink(helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?merchantId=105064"));
+        link.setDeepLink("ty://?Page=Product&ContentId=1925865&MerchantId=105064");
+        link.setBoutiqueId(null);
+        link.setMerchantId(105064L);
+        link.setBrandOrCategoryName("casio");
+        link.setProductName("erkek-kol-saati");
+        link.setContentId(1925865L);
+        link.setDeleted(false);
+        return link;
+    }
+}

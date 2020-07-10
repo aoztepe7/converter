@@ -1,0 +1,23 @@
+# Spring
+spring:
+
+  # Datasource
+  datasource:
+    url: jdbc:postgresql://localhost:5432/converter
+    username: postgres
+    password: secret
+    driver-class-name: org.postgresql.Driver
+
+  # Jpa
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+# Server
+server:
+  port: 8080
+
+
+
