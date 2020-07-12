@@ -1,5 +1,6 @@
 package com.ztp.converter.handler;
 
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.domain.link.Link;
 import com.ztp.converter.domain.link.LinkService;
 import com.ztp.converter.exception.LinkNotFoundException;
@@ -29,6 +30,9 @@ public class ProductDetailLinkCreateHandlerTest {
     private Helper helper;
 
     private ProductDetailLinkCreateHandler productDetailLinkCreateHandler;
+
+    @Mock
+    private UrlConfig urlConfig;
 
     @Before
     public void setUp() {
@@ -64,6 +68,10 @@ public class ProductDetailLinkCreateHandlerTest {
 
         createCommand.setWebLink(helper
                 .usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892&merchantId=105064"));
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
+        when(urlConfig.getBaseProductDetailDeepLink()).thenReturn("ty://?Page=Product&ContentId=");
 
         when(linkService.getByWebLink(createCommand.getWebLink())).thenThrow(LinkNotFoundException.class);
 

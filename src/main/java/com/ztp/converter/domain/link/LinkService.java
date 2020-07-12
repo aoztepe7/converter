@@ -1,9 +1,9 @@
 package com.ztp.converter.domain.link;
 
 public interface LinkService {
-    Link getByWebLink(String webLink);
+    Link getBySectionName(String sectionName);
 
     Link create(Link link);
 
-    Long getLastSectionId();
+    Link getByWebLink(String webLink);
 }

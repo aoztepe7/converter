@@ -1,5 +1,6 @@
 package com.ztp.converter.handler;
 
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.domain.link.Link;
 import com.ztp.converter.domain.link.LinkService;
 import com.ztp.converter.exception.LinkNotFoundException;
@@ -25,6 +26,9 @@ public class SearchLinkCreateHandlerTest {
     @Mock
     private LinkService linkService;
 
+    @Mock
+    private UrlConfig urlConfig;
+
     @InjectMocks
     private Helper helper;
 
@@ -43,6 +47,10 @@ public class SearchLinkCreateHandlerTest {
         LinkCreateCommand createCommand = new LinkCreateCommand();
 
         createCommand.setWebLink("https://www.trendyol.com/tum--urunler?q=elbise");
+
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
 
         when(linkService.getByWebLink(createCommand.getWebLink())).thenReturn(existLink);
 
@@ -64,6 +72,10 @@ public class SearchLinkCreateHandlerTest {
 
         createCommand.setWebLink("https://www.trendyol.com/tum--urunler?q=ELBISE");
 
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
+
         when(linkService.getByWebLink(createCommand.getWebLink().toLowerCase())).thenReturn(existLink);
 
         //act
@@ -81,6 +93,10 @@ public class SearchLinkCreateHandlerTest {
         LinkCreateCommand createCommand = new LinkCreateCommand();
 
         createCommand.setWebLink("https://www.trendyol.com/tum--urunler?q=elbise");
+
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
 
         when(linkService.getByWebLink(createCommand.getWebLink())).thenThrow(LinkNotFoundException.class);
 

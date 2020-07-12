@@ -1,11 +1,14 @@
 package com.ztp.converter.utils;
 
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.domain.link.Link;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 
@@ -15,10 +18,15 @@ public class HelperTest {
     @InjectMocks
     private Helper helper;
 
+    @Mock
+    private UrlConfig urlConfig;
+
     @Test
     public void homePageChecker_ShouldReturnTrue_WhenLinkStartsWithHomePageURL() {
         //arrange
         String webLink = "https://www.trendyol.com/butik/liste/erkek";
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
 
         // act
         boolean result = helper.homePageChecker(webLink);
@@ -31,6 +39,8 @@ public class HelperTest {
     public void homePageChecker_ShouldReturnFalse_WhenLinkNotStartsWithHomePageURL() {
         //arrange
         String webLink = "https://www.google.com/butik/liste/erkek";
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
 
         // act
         boolean result = helper.homePageChecker(webLink);
@@ -92,6 +102,8 @@ public class HelperTest {
         //arrange
         Link link = getFullInformationDummyLink();
 
+        when(urlConfig.getBaseProductDetailDeepLink()).thenReturn("ty://?Page=Product&ContentId=");
+
         //act
         String result = helper.productDetailDeepLinkCreator(link);
 
@@ -103,6 +115,8 @@ public class HelperTest {
     public void productDetailDeepLinkCreator_ShouldSucceed_WhenOnlyContentIdIsGiven() {
         //arrange
         Link link = getOnlyContentIdDummyLink();
+
+        when(urlConfig.getBaseProductDetailDeepLink()).thenReturn("ty://?Page=Product&ContentId=");
 
         //act
         String result = helper.productDetailDeepLinkCreator(link);
@@ -116,6 +130,8 @@ public class HelperTest {
         //arrange
         Link link = getBoutiqueIdFilledDummyLink();
 
+        when(urlConfig.getBaseProductDetailDeepLink()).thenReturn("ty://?Page=Product&ContentId=");
+
         //act
         String result = helper.productDetailDeepLinkCreator(link);
 
@@ -128,6 +144,8 @@ public class HelperTest {
         //arrange
         Link link = getMerchantIdFilledDummyLink();
 
+        when(urlConfig.getBaseProductDetailDeepLink()).thenReturn("ty://?Page=Product&ContentId=");
+
         //act
         String result = helper.productDetailDeepLinkCreator(link);
 
@@ -138,7 +156,9 @@ public class HelperTest {
     @Test
     public void boutiqueDeepLinkCreator_ShouldSucceed_WhenLongIdIsGiven() {
         //arrange
-        Long givenId = 2L;
+        String givenId = "2";
+
+        when(urlConfig.getBaseBoutiqueDeepLink()).thenReturn( "ty://?Page=Home&SectionId=");
 
         //act
         String result = helper.boutiqueDeepLinkCreator(givenId);
@@ -152,6 +172,10 @@ public class HelperTest {
         //arrange
         String webLink = "https://www.trendyol.com/tum--urunler?q=%C3%BCt%C3%BC";
 
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
+
         //act
         String result = helper.searchDeepLinkCreator(webLink);
 
@@ -163,6 +187,10 @@ public class HelperTest {
     public void searchDeepLinkCreator_ShouldSucceed_whenQueryIsLowerCase() {
         //arrange
         String webLink = "https://www.trendyol.com/tum--urunler?q=elbise";
+
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
 
         //act
         String result = helper.searchDeepLinkCreator(webLink);
@@ -176,6 +204,10 @@ public class HelperTest {
         //arrange
         String webLink = "https://www.trendyol.com/tum--urunler?q=ELBISE";
 
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
+
         //act
         String result = helper.searchDeepLinkCreator(webLink);
 
@@ -188,6 +220,10 @@ public class HelperTest {
         //arrange
         String webLink = "https://www.trendyol.com/tum--urunler?q=ELBİSE";
 
+        when(urlConfig.getBaseWebSearchLink()).thenReturn("https://www.trendyol.com/tum--urunler?q=");
+
+        when(urlConfig.getBaseSearchDeepLink()).thenReturn("ty://?Page=Search&Query=");
+
         //act
         String result = helper.searchDeepLinkCreator(webLink);
 
@@ -199,6 +235,8 @@ public class HelperTest {
     public void productDetailLinkParser_ShouldSucceed_WhenFullLinkGiven() {
         //arrange
         String webLink = helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892&merchantId=105064");
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
 
         //act
         HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
@@ -220,6 +258,8 @@ public class HelperTest {
         //arrange
         String webLink = "https://www.trendyol.com/casio/erkek-kol-saati-p-1925865";
 
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
         //act
         HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
 
@@ -240,6 +280,8 @@ public class HelperTest {
         //arrange
         String webLink = helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?boutiqueId=439892");
 
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
         //act
         HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
 
@@ -259,6 +301,8 @@ public class HelperTest {
     public void productDetailLinkParser_ShouldSucceed_WhenOnlyMerchantIdGiven() {
         //arrange
         String webLink = helper.usLocaleConverter("https://www.trendyol.com/casio/erkek-kol-saati-p-1925865?merchantId=439892");
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
 
         //act
         HashMap<String, String> parsedMap = helper.productDetailLinkParser(webLink);
