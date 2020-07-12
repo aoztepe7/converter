@@ -23,8 +23,8 @@ public class Link {
     @Column(name = "deep_link", nullable = false)
     private String deepLink;
 
-    @Column(name = "section_id")
-    private Long sectionId;
+    @Column(name = "section_name")
+    private String sectionName;
 
     @Column(name = "brand_or_category_name")
     private String brandOrCategoryName;
@@ -47,4 +47,7 @@ public class Link {
 
     @Column(nullable = false)
     private Boolean deleted = false;
+
+    @Column(nullable = false)
+    private Boolean isValid;
 }

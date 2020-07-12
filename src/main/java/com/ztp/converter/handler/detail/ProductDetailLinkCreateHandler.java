@@ -61,6 +61,7 @@ public class ProductDetailLinkCreateHandler implements Handler<LinkCreateCommand
         }
         link.setDeepLink(helper.productDetailDeepLinkCreator(link));
         link.setType(Type.PRODUCT_DETAIL);
+        link.setIsValid(true);
         return link;
     }
 }

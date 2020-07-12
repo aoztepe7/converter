@@ -1,5 +1,6 @@
 package com.ztp.converter.handler;
 
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.domain.link.Link;
 import com.ztp.converter.domain.link.LinkService;
 import com.ztp.converter.exception.LinkNotFoundException;
@@ -22,11 +23,14 @@ public class HomePageReturnHandlerTest {
     @Mock
     private LinkService linkService;
 
+    @Mock
+    private UrlConfig urlConfig;
+
     private HomePageReturnHandler homePageReturnHandler;
 
     @Before
     public void setUp() {
-        homePageReturnHandler = new HomePageReturnHandler(linkService);
+        homePageReturnHandler = new HomePageReturnHandler(linkService,urlConfig);
     }
 
     @Test
@@ -55,6 +59,8 @@ public class HomePageReturnHandlerTest {
         LinkCreateCommand createCommand = new LinkCreateCommand();
 
         createCommand.setWebLink("https://www.trendyol.com/wrong-link");
+
+        when(urlConfig.getDeepHomePage()).thenReturn("ty://?Page=Home");
 
         when(linkService.getByWebLink(createCommand.getWebLink())).thenThrow(LinkNotFoundException.class);
 

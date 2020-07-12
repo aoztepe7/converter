@@ -1,0 +1,7 @@
+version: '6'
+services:
+  db:
+    image: "redis"
+    hostname: localhost
+    ports:
+      - "6379:6379"

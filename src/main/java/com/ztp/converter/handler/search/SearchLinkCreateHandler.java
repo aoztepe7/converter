@@ -30,7 +30,7 @@ public class SearchLinkCreateHandler implements Handler<LinkCreateCommand, Commo
                     .build();
 
         } catch (LinkNotFoundException exception) {
-            Link link = searchFiller(request.getWebLink());
+            Link link = searchEntryFiller(request.getWebLink());
             linkService.create(link);
 
             return CommonResponse.builder()
@@ -40,11 +40,12 @@ public class SearchLinkCreateHandler implements Handler<LinkCreateCommand, Commo
         }
     }
 
-    private Link searchFiller(String webLink) {
+    private Link searchEntryFiller(String webLink) {
         Link link = new Link();
         link.setWebLink(webLink.toLowerCase());
         link.setDeepLink(helper.searchDeepLinkCreator(webLink));
         link.setType(Type.SEARCH);
+        link.setIsValid(true);
         return link;
     }
 }

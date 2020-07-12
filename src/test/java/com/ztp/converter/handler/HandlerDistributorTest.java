@@ -1,5 +1,7 @@
 package com.ztp.converter.handler;
 
+import com.ztp.converter.config.PrefixConfig;
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.exception.HomePageUrlException;
 import com.ztp.converter.handler.boutique.BoutiqueListLinkCreateHandler;
 import com.ztp.converter.handler.detail.ProductDetailLinkCreateHandler;
@@ -7,6 +9,7 @@ import com.ztp.converter.handler.other.HomePageReturnHandler;
 import com.ztp.converter.handler.search.SearchLinkCreateHandler;
 import com.ztp.converter.message.request.LinkCreateCommand;
 import com.ztp.converter.message.response.CommonResponse;
+import com.ztp.converter.message.response.ResponseCode;
 import com.ztp.converter.utils.DistributorRuler;
 import com.ztp.converter.utils.Helper;
 import org.junit.Before;
@@ -30,16 +33,22 @@ public class HandlerDistributorTest {
     private HandlerDistributor handlerDistributor;
 
     @Mock
-    BoutiqueListLinkCreateHandler boutiqueListLinkCreateHandler;
+    private BoutiqueListLinkCreateHandler boutiqueListLinkCreateHandler;
 
     @Mock
-    ProductDetailLinkCreateHandler productDetailLinkCreateHandler;
+    private ProductDetailLinkCreateHandler productDetailLinkCreateHandler;
 
     @Mock
-    SearchLinkCreateHandler searchLinkCreateHandler;
+    private SearchLinkCreateHandler searchLinkCreateHandler;
 
     @Mock
-    HomePageReturnHandler homePageReturnHandler;
+    private HomePageReturnHandler homePageReturnHandler;
+
+    @Mock
+    private UrlConfig urlConfig;
+
+    @Mock
+    private PrefixConfig prefixConfig;
 
     @Before
     public void setUp() {
@@ -52,6 +61,8 @@ public class HandlerDistributorTest {
     public void handlerDistributor_ShouldThrowException_WhenLinkIsNotStartsWithHomePageURL() {
         //arrange
         LinkCreateCommand createCommand = new LinkCreateCommand();
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
 
         createCommand.setWebLink("https://www.google.com");
 
@@ -66,7 +77,13 @@ public class HandlerDistributorTest {
 
         createCommand.setWebLink("https://www.trendyol.com/butik/liste/erkek");
 
-        when(boutiqueListLinkCreateHandler.execute(any(LinkCreateCommand.class))).thenReturn(any(CommonResponse.class));
+        when(prefixConfig.getBoutiquePrefix()).thenReturn("butik/liste");
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
+        when(prefixConfig.getSearchPrefix()).thenReturn("tum--urunler");
+
+        when(boutiqueListLinkCreateHandler.execute(createCommand)).thenReturn(getDummyResponse());
 
         //act
         handlerDistributor.execute(createCommand);
@@ -88,7 +105,15 @@ public class HandlerDistributorTest {
 
         createCommand.setWebLink("https://www.trendyol.com/casio/erkek-kol-saati-p-1921685");
 
-        when(productDetailLinkCreateHandler.execute(createCommand)).thenReturn(any(CommonResponse.class));
+        when(productDetailLinkCreateHandler.execute(createCommand)).thenReturn(getDummyResponse());
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
+        when(prefixConfig.getSearchPrefix()).thenReturn("tum--urunler");
+
+        when(prefixConfig.getBoutiquePrefix()).thenReturn("butik/liste");
+
+        when(prefixConfig.getProductDetailPrefix()).thenReturn("-p-");
 
         //act
         handlerDistributor.execute(createCommand);
@@ -110,7 +135,12 @@ public class HandlerDistributorTest {
 
         createCommand.setWebLink("https://www.trendyol.com/tum--urunler?q=%C3");
 
-        when(searchLinkCreateHandler.execute(createCommand)).thenReturn(any(CommonResponse.class));
+        when(searchLinkCreateHandler.execute(createCommand)).thenReturn(getDummyResponse());
+
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
+        when(prefixConfig.getSearchPrefix()).thenReturn("tum--urunler");
+
 
         //act
         handlerDistributor.execute(createCommand);
@@ -132,7 +162,15 @@ public class HandlerDistributorTest {
 
         createCommand.setWebLink("https://www.trendyol.com/Hesaplar/");
 
-        when(homePageReturnHandler.execute(createCommand)).thenReturn(any(CommonResponse.class));
+        when(urlConfig.getWebHomePage()).thenReturn("https://www.trendyol.com");
+
+        when(prefixConfig.getBoutiquePrefix()).thenReturn("butik/liste");
+
+        when(prefixConfig.getSearchPrefix()).thenReturn("tum--urunler");
+
+        when(prefixConfig.getProductDetailPrefix()).thenReturn("-p-");
+
+        when(homePageReturnHandler.execute(createCommand)).thenReturn(getDummyResponse());
 
         //act
         handlerDistributor.execute(createCommand);
@@ -145,5 +183,12 @@ public class HandlerDistributorTest {
         verify(boutiqueListLinkCreateHandler, times(0)).execute(createCommand);
 
         verify(productDetailLinkCreateHandler, times(0)).execute(createCommand);
+    }
+
+    private CommonResponse getDummyResponse(){
+        return CommonResponse.builder()
+                .responseCode(ResponseCode.SUCCESS)
+                .deepLink("dummyDeepLink")
+                .build();
     }
 }

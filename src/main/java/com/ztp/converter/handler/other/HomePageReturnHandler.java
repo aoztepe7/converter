@@ -1,5 +1,6 @@
 package com.ztp.converter.handler.other;
 
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.domain.Type;
 import com.ztp.converter.domain.link.Link;
 import com.ztp.converter.domain.link.LinkService;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class HomePageReturnHandler implements Handler<LinkCreateCommand, CommonResponse> {
 
     private final LinkService linkService;
-    private static final String BASE_DEEP_LINK = "ty://?Page=Home";
+    private final UrlConfig urlConfig;
 
     @Override
     public CommonResponse execute(LinkCreateCommand request) {
@@ -42,8 +43,9 @@ public class HomePageReturnHandler implements Handler<LinkCreateCommand, CommonR
     private Link homePageReturnerFiller(String webLink) {
         Link link = new Link();
         link.setWebLink(webLink);
-        link.setDeepLink(BASE_DEEP_LINK);
+        link.setDeepLink(urlConfig.getDeepHomePage());
         link.setType(Type.HOME_PAGE);
+        link.setIsValid(true);
         return link;
     }
 }

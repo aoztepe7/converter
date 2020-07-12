@@ -14,10 +14,28 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+  redis:
+    host: localhost
+    port: 6379
+  artemis:
+    host:
 
 # Server
 server:
   port: 8080
 
+url:
+  webHomePage: "https://www.trendyol.com"
+  deepHomePage: "ty://?Page=Home"
+  baseWebSearchLink:  "https://www.trendyol.com/tum--urunler?q="
+  baseSearchDeepLink: "ty://?Page=Search&Query="
+  baseProductDetailDeepLink: "ty://?Page=Product&ContentId="
+  baseBoutiqueDeepLink:  "ty://?Page=Home&SectionId="
+  baseWebBoutiqueLink:  "https://www.trendyol.com/butik/liste/"
+
+prefix:
+  boutiquePrefix: "butik/liste"
+  productDetailPrefix: "-p-"
+  searchPrefix: "tum--urunler"
 
 

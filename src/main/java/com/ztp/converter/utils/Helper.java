@@ -1,23 +1,22 @@
 package com.ztp.converter.utils;
 
+import com.ztp.converter.config.UrlConfig;
 import com.ztp.converter.domain.link.Link;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Locale;
 
+@AllArgsConstructor
 @Component
 public class Helper {
 
-    private static final String BASE_URL = "https://www.trendyol.com";
-    private static final String BASE_DEEP_LINK_WITH_SECTION = "ty://?Page=Home&SectionId=";
-    private static final String BASE_SEARCH_DEEP_LINK = "ty://?Page=Search&Query=";
-    private static final String BASE_SEARCH_WEB_LINK = "https://www.trendyol.com/tum--urunler?q=";
-    private static final String PRODUCT_DETAIL_BASE_DEEP_LINK = "ty://?Page=Product&ContentId=";
+    private final UrlConfig urlConfig;
 
     public boolean homePageChecker(String webLink) {
-        return webLink.startsWith(BASE_URL);
+        return webLink.startsWith(urlConfig.getWebHomePage());
     }
 
     public String usLocaleConverter(String name) {
@@ -29,7 +28,7 @@ public class Helper {
     }
 
     public String productDetailDeepLinkCreator(Link link) {
-        String contentFilledLink = String.format("%s%s", PRODUCT_DETAIL_BASE_DEEP_LINK, link.getContentId().toString());
+        String contentFilledLink = String.format("%s%s", urlConfig.getBaseProductDetailDeepLink(), link.getContentId().toString());
         if (link.getBoutiqueId() != null) {
             contentFilledLink = String.format("%s&%s%s", contentFilledLink, "CampaignId=", link.getBoutiqueId().toString());
         }
@@ -39,13 +38,13 @@ public class Helper {
         return contentFilledLink;
     }
 
-    public String boutiqueDeepLinkCreator(Long id) {
-        return String.format("%s%s", BASE_DEEP_LINK_WITH_SECTION, id);
+    public String boutiqueDeepLinkCreator(String id) {
+        return String.format("%s%s", urlConfig.getBaseBoutiqueDeepLink(), id);
     }
 
     public String searchDeepLinkCreator(String webLink) {
-        String baseEraser = webLink.replace(BASE_SEARCH_WEB_LINK, "");
-        return String.format("%s%s", BASE_SEARCH_DEEP_LINK, usLocaleConverterWithOutLowerCase(baseEraser));
+        String baseEraser = webLink.replace(urlConfig.getBaseWebSearchLink(), "");
+        return String.format("%s%s", urlConfig.getBaseSearchDeepLink(), usLocaleConverterWithOutLowerCase(baseEraser));
     }
 
     public String usLocaleConverterWithOutLowerCase(String name) {
@@ -57,7 +56,7 @@ public class Helper {
 
     public HashMap<String, String> productDetailLinkParser(String fullLink) {
         HashMap<String, String> parsedMap = new HashMap<>();
-        String eraseBaseLink = fullLink.replace(BASE_URL + "/", "");
+        String eraseBaseLink = fullLink.replace(urlConfig.getWebHomePage() + "/", "");
         String brandOrCategoryName = eraseBaseLink.split("/", 2)[0];
         String productName = eraseBaseLink.split("/", 3)[1].split("-p-")[0];
         String afterPChar = eraseBaseLink.split("-p-")[1];

@@ -13,8 +13,8 @@ public class LinkServiceImpl implements LinkService {
     private final LinkRepository linkRepository;
 
     @Override
-    public Link getByWebLink(String webLink) {
-        return Optional.ofNullable(linkRepository.findByWebLinkAndDeletedFalse(webLink))
+    public Link getBySectionName(String sectionName) {
+        return Optional.ofNullable(linkRepository.findBySectionNameAndDeletedFalseAndIsValidTrue(sectionName))
                 .orElseThrow(LinkNotFoundException::new);
     }
 
@@ -24,7 +24,8 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public Long getLastSectionId() {
-        return linkRepository.countBySectionIdNotNullAndDeletedFalse();
+    public Link getByWebLink(String webLink) {
+        return Optional.ofNullable(linkRepository.findByWebLinkAndDeletedFalseAndIsValidTrue(webLink))
+                .orElseThrow(LinkNotFoundException::new);
     }
 }
